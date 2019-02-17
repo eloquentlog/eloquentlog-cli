@@ -1,0 +1,24 @@
+[package]
+name = "eloquentlog-cli"
+version = "0.0.1"
+authors = ["Yasuhiro Яша Asaka <yasuhiro.asaka@grauwoelfchen.net>"]
+description = "A command line interface for Eloquentlog."
+repository = "https://gitlab.com/eloquentlog/eloquentlog-cli"
+keywords = []
+license = "GPL-3.0"
+
+[[bin]]
+name = "el"
+path = "src/main.rs"
+
+[profile.release]
+panic = "abort"
+
+[dependencies]
+clippy = { version = "^0.0.212", optional = true }
+structopt = { version = "0.2.10", default-features = false }
+
+[dev-dependencies.cargo-husky]
+version = "1"
+default-features = false
+features = ["user-hooks"]
