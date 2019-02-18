@@ -3,7 +3,7 @@ stages:
   - test
   - build
 
-.vet-tools: &veth-tools
+.vet-tools: &vet-tools
   image: grauwoelfchen/rust-vet-tools:stable
   except:
     - tags
