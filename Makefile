@@ -34,6 +34,14 @@ vet: | vet\:all
 # }}}
 
 # test -- {{{
+test\:unit:  ## Run unit tests
+	@cargo test --bin el
+.PHONY: test\:unit
+
+test\:integration:  ## Run integration tests
+	@cargo test --test integration_test
+.PHONY: test\:unit
+
 test\:all:  ## Run unit tests and integration tests [alias: test]
 	@cargo test --tests
 .PHONY: test\:all
@@ -44,9 +52,9 @@ test: | test\:all
 
 # coverage -- {{{
 coverage:  ## Generate coverage report of unit tests only for lib using kcov [alias: cov]
-	@cargo test --lib eloquentlog-cli --no-run
+	@cargo test --bin el --no-run
 	@./.tools/setup-kcov
-	./.tools/get-covered eloquentlog-cli
+	./.tools/get-covered el
 .PHONY: coverage
 
 cov: | coverage
@@ -80,9 +88,12 @@ install:  ## Install el command into the directory same with cargo
 .PHONY: install
 
 help:  ## Display this message
-	@grep -E '^[0-9a-z\:\\]+: ' $(MAKEFILE_LIST) | grep -E '  ## ' | \
-	  sed -e 's/\(\s|\(\s[0-9a-z\:\\]*\)*\)  /  /' | tr -d \\\\ | \
-	  awk 'BEGIN {FS = ":  ## "}; {printf "\033[38;05;222m%-13s\033[0m %s\n", $$1, $$2}' | \
+	@grep -E '^[0-9a-z\:\\]+: ' $(MAKEFILE_LIST) | \
+	  grep -E '  ## ' | \
+	  sed -e 's/\(\s|\(\s[0-9a-z\:\\]*\)*\)  /  /' | \
+	  tr -d \\\\ | \
+	  awk 'BEGIN {FS = ":  ## "}; \
+	      {printf "\033[38;05;222m%-17s\033[0m %s\n", $$1, $$2}' | \
 	  sort
 .PHONY: help
 # }}}
