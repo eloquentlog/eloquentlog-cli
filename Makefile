@@ -40,7 +40,7 @@ test\:unit:  ## Run unit tests
 
 test\:integration:  ## Run integration tests
 	@cargo test --test integration_test
-.PHONY: test\:unit
+.PHONY: test\:integration
 
 test\:all:  ## Run unit tests and integration tests [alias: test]
 	@cargo test --tests
