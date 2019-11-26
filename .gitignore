@@ -1,8 +1,11 @@
-/target
-**/*.rs.bk
+target
+tmp
+vendor
 
-/.tools/kcov
-/.tools/gitlab-runner
-
-/.env*
+.env*
 !.env*.sample
+.cargo/config
+.cargo/vendor
+.tool/kcov
+.tool/gitlab-runner
+**/*.rs.bk
