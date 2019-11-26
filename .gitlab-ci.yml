@@ -1,5 +1,11 @@
+.vendor:
+  - &vendor
+    if [ ! -d "vendor" ]; then
+      make setup:vendor;
+    fi
+
 stages:
-  - vet
+  - verify
   - test
   - build
 
@@ -8,18 +14,27 @@ stages:
   except:
     - tags
 
+.rust: &rust
+  image: grauwoelfchen/rust:stable
+  before_script:
+    - rustc --version
+    - cargo --version
+    - *vendor
+    - mkdir -p .git/hooks
+
+# -- verify {{{
 check:
-  stage: vet
+  stage: verify
   <<: *vet-tools
   before_script:
     - rustc --version
     - cargo --version
     - mkdir -p .git/hooks
   script:
-    - make vet:check
+    - make verify:check
 
 format:
-  stage: vet
+  stage: verify
   <<: *vet-tools
   before_script:
     - rustc --version
@@ -27,19 +42,22 @@ format:
     - cargo fmt --version
     - mkdir -p .git/hooks
   script:
-    - make vet:format
+    - make verify:format
 
 lint:
-  stage: vet
+  stage: verify
   <<: *vet-tools
   before_script:
     - rustc --version
     - cargo --version
     - cargo clippy --version
+    - *vendor
     - mkdir -p .git/hooks
   script:
-    - make vet:lint
+    - make verify:lint
+# }}}
 
+# -- test {{{
 test:
   stage: test
   <<: *vet-tools
@@ -47,20 +65,19 @@ test:
     - rustc --version
     - cargo --version
     - kcov --version
+    - *vendor
     - mkdir -p .git/hooks
   script:
     # test & get covered
     - KCOV_PATH=/usr/bin/kcov make coverage
   after_script:
     - cat target/coverage/index.json
+# }}}
 
+# -- build {{{
 build:
   stage: build
-  image: grauwoelfchen/rust:stable
-  before_script:
-    - rustc --version
-    - cargo --version
-    - mkdir -p .git/hooks
+  <<: *rust
   script:
     - make build:debug
   cache:
@@ -70,14 +87,11 @@ build:
 
 release:
   stage: build
-  image: grauwoelfchen/rust:stable
-  before_script:
-    - rustc --version
-    - cargo --version
-    - mkdir -p .git/hooks
+  <<: *rust
   script:
     - make build:release
   cache:
     untracked: true
   only:
     - tags
+# }}}
