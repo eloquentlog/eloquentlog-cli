@@ -107,9 +107,13 @@ package:  ## Create package
 	@cargo package
 .PHONY: package
 
-install:  ## Install el command into the directory same with cargo
+install:  ## Install eloquentlog command into the directory same with cargo
 	@cargo install --path . --force
 .PHONY: install
+
+uninstall:  ## Uninstall eloquentlog command
+	@cargo uninstall eloquentlog-cli
+.PHONY: uninstall
 
 help:  ## Display this message
 	@grep --extended-regexp '^[0-9a-z\:\\]+: ' $(MAKEFILE_LIST) | \
