@@ -4,6 +4,7 @@ version = "0.0.1"
 authors = ["Yasuhiro Яша Asaka <yasuhiro.asaka@grauwoelfchen.net>"]
 description = "A command line interface for Eloquentlog."
 repository = "https://gitlab.com/eloquentlog/eloquentlog-cli"
+edition = "2018"
 keywords = []
 license = "GPL-3.0"
 
