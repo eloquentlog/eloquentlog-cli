@@ -3,7 +3,7 @@
 //! # Examples
 //!
 //! ```zsh
-//! % el --help
+//! % eloquentlog --help
 //! ```
 extern crate structopt;
 
@@ -14,14 +14,17 @@ use config::Config;
 
 /// command options.
 #[derive(Debug, StructOpt)]
-#[structopt(name = "el", about = "\nA command line interface for Eloquentlog.")]
+#[structopt(
+    name = "eloquentlog",
+    about = "\nA command line interface for Eloquentlog."
+)]
 pub struct Opts {}
 
 fn main() {
     let opts = Opts::from_args();
     let c = Config::new(opts);
     if !c.is_valid() {
-        eprintln!("Usage: el <ACTION> <OPTION>, ...");
+        eprintln!("Usage: eloquentlog <ACTION> <OPTION>, ...");
         std::process::exit(1);
     }
 
