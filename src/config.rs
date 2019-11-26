@@ -1,4 +1,4 @@
-use Opts;
+use crate::Opts;
 
 pub struct Config {
     pub opts: Opts,

@@ -8,14 +8,17 @@ keywords = []
 license = "GPL-3.0"
 
 [[bin]]
-name = "el"
+name = "eloquentlog"
 path = "src/main.rs"
+
+[[test]]
+name = "integration"
+path = "test/test.rs"
 
 [profile.release]
 panic = "abort"
 
 [dependencies]
-clippy = { version = "^0.0.212", optional = true }
 structopt = { version = "0.2.10", default-features = false }
 
 [dev-dependencies.cargo-husky]

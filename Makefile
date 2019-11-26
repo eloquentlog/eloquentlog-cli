@@ -39,7 +39,7 @@ test\:unit:  ## Run unit tests
 .PHONY: test\:unit
 
 test\:integration:  ## Run integration tests
-	@cargo test --test integration_test
+	@cargo test --test integration
 .PHONY: test\:integration
 
 test\:all:  ## Run unit tests and integration tests [alias: test]
