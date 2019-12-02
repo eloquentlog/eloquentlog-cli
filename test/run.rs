@@ -9,7 +9,30 @@ fn test_run_with_unknown_option() {
 
         assert!(String::from_utf8_lossy(&out.stderr).contains("error:"));
         assert_eq!(String::from_utf8_lossy(&out.stdout), "");
-    })
+    });
+}
+
+#[test]
+fn test_run_in_debug_mode() {
+    let msg = "debug mode: on";
+
+    run_test(|cmd: &mut Command| {
+        let out = cmd.output().unwrap();
+        assert_eq!(String::from_utf8_lossy(&out.stderr), "");
+        assert!(!String::from_utf8_lossy(&out.stdout).contains(msg));
+    });
+
+    run_test(|cmd: &mut Command| {
+        let out = cmd.arg("-d").output().unwrap();
+        assert_eq!(String::from_utf8_lossy(&out.stderr), "");
+        assert!(String::from_utf8_lossy(&out.stdout).contains(msg));
+    });
+
+    run_test(|cmd: &mut Command| {
+        let out = cmd.arg("--debug").output().unwrap();
+        assert_eq!(String::from_utf8_lossy(&out.stderr), "");
+        assert!(String::from_utf8_lossy(&out.stdout).contains(msg));
+    });
 }
 
 #[test]
@@ -19,5 +42,5 @@ fn test_run_with_help() {
 
         assert_eq!(String::from_utf8_lossy(&out.stderr), "");
         assert!(String::from_utf8_lossy(&out.stdout).contains("USAGE"));
-    })
+    });
 }
