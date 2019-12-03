@@ -5,7 +5,9 @@ mod run;
 
 /// A test runner for integration tests
 pub fn run_test<T>(test: T)
-where T: FnOnce(&mut Command) -> () + panic::UnwindSafe {
+where
+    T: FnOnce(&mut Command) -> () + panic::UnwindSafe,
+{
     setup();
 
     let result = panic::catch_unwind(AssertUnwindSafe(|| {
