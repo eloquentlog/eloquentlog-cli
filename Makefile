@@ -77,8 +77,8 @@ test: | test\:all
 # coverage -- {{{
 coverage:  ## Generate coverage report of unit tests only for lib using kcov [alias: cov]
 	@cargo test --bin eloquentlog --no-run
-	@./.tools/setup-kcov
-	./.tools/get-covered eloquentlog
+	@./.tool/setup-kcov
+	./.tool/get-covered eloquentlog
 .PHONY: coverage
 
 cov: | coverage
