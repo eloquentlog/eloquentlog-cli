@@ -18,7 +18,17 @@ use config::Config;
     name = "eloquentlog",
     about = "\nA command line interface for Eloquentlog."
 )]
-pub struct Opts {}
+pub struct Opts {
+    /// Run debug mode
+    #[structopt(short, long)]
+    debug: bool,
+}
+
+impl Default for Opts {
+    fn default() -> Opts {
+        Opts { debug: false }
+    }
+}
 
 fn main() {
     let opts = Opts::from_args();
@@ -26,6 +36,10 @@ fn main() {
     if !c.is_valid() {
         eprintln!("Usage: eloquentlog <ACTION> <OPTION>, ...");
         std::process::exit(1);
+    }
+
+    if c.is_debug() {
+        println!("debug mode: on");
     }
 
     println!("Hoi");
