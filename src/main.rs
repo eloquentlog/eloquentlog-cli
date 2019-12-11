@@ -5,11 +5,16 @@
 //! ```zsh
 //! % eloquentlog --help
 //! ```
+extern crate dirs;
+extern crate serde;
 extern crate structopt;
+extern crate toml;
 
 use structopt::StructOpt;
 
 mod config;
+mod runner;
+
 use config::Config;
 
 /// command options.
@@ -22,25 +27,30 @@ pub struct Opts {
     /// Run debug mode
     #[structopt(short, long)]
     debug: bool,
+
+    /// Path to config file
+    #[structopt(short, long, default_value = "")]
+    config_file: String,
 }
 
 impl Default for Opts {
     fn default() -> Opts {
-        Opts { debug: false }
+        let config_file =
+            Config::default_config_file().to_str().unwrap().to_string();
+        Opts {
+            debug: false,
+            config_file,
+        }
     }
 }
 
 fn main() {
     let opts = Opts::from_args();
-    let c = Config::new(opts);
-    if !c.is_valid() {
-        eprintln!("Usage: eloquentlog <ACTION> <OPTION>, ...");
-        std::process::exit(1);
-    }
-
-    if c.is_debug() {
-        println!("debug mode: on");
-    }
-
-    println!("Hoi");
+    std::process::exit(match runner::run(opts) {
+        Ok(_) => 0,
+        Err(e) => {
+            eprintln!("{:?}", e);
+            1
+        }
+    });
 }

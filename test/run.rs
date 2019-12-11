@@ -5,8 +5,11 @@ use crate::run_test;
 #[test]
 fn test_run_with_unknown_option() {
     run_test(|cmd: &mut Command| {
-        let out = cmd.arg("--unknown").output().unwrap();
-
+        let out = cmd
+            .arg("--config-file=./test/eloquentlog.toml")
+            .arg("--unknown")
+            .output()
+            .unwrap();
         assert!(String::from_utf8_lossy(&out.stderr).contains("error:"));
         assert_eq!(String::from_utf8_lossy(&out.stdout), "");
     });
@@ -17,19 +20,30 @@ fn test_run_in_debug_mode() {
     let msg = "debug mode: on";
 
     run_test(|cmd: &mut Command| {
-        let out = cmd.output().unwrap();
+        let out = cmd
+            .arg("--config-file=./test/eloquentlog.toml")
+            .output()
+            .unwrap();
         assert_eq!(String::from_utf8_lossy(&out.stderr), "");
         assert!(!String::from_utf8_lossy(&out.stdout).contains(msg));
     });
 
     run_test(|cmd: &mut Command| {
-        let out = cmd.arg("-d").output().unwrap();
+        let out = cmd
+            .arg("--config-file=./test/eloquentlog.toml")
+            .arg("-d")
+            .output()
+            .unwrap();
         assert_eq!(String::from_utf8_lossy(&out.stderr), "");
         assert!(String::from_utf8_lossy(&out.stdout).contains(msg));
     });
 
     run_test(|cmd: &mut Command| {
-        let out = cmd.arg("--debug").output().unwrap();
+        let out = cmd
+            .arg("--config-file=./test/eloquentlog.toml")
+            .arg("--debug")
+            .output()
+            .unwrap();
         assert_eq!(String::from_utf8_lossy(&out.stderr), "");
         assert!(String::from_utf8_lossy(&out.stdout).contains(msg));
     });
@@ -38,7 +52,11 @@ fn test_run_in_debug_mode() {
 #[test]
 fn test_run_with_help() {
     run_test(|cmd: &mut Command| {
-        let out = cmd.arg("--help").output().unwrap();
+        let out = cmd
+            .arg("--config-file=./test/eloquentlog.toml")
+            .arg("--help")
+            .output()
+            .unwrap();
 
         assert_eq!(String::from_utf8_lossy(&out.stderr), "");
         assert!(String::from_utf8_lossy(&out.stdout).contains("USAGE"));
