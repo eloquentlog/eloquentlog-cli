@@ -80,6 +80,33 @@ mod test {
 
     #[test]
     fn test_is_debug() {
+        let tests = vec![
+            (
+                Opts {
+                    debug: false,
+                    ..Default::default()
+                },
+                false,
+            ),
+            (
+                Opts {
+                    debug: true,
+                    ..Default::default()
+                },
+                true,
+            ),
+        ];
+        for (opts, want) in tests.into_iter() {
+            let config = Config {
+                secret: "".to_string(),
+                opts,
+            };
+            assert_eq!(config.is_debug(), want);
+        }
+    }
+
+    #[test]
+    fn test_is_valid() {
         let opts = Opts {
             ..Default::default()
         };
@@ -88,6 +115,6 @@ mod test {
             secret: "".to_string(),
             opts,
         };
-        assert_eq!(config.is_debug(), false);
+        assert_eq!(config.is_valid(), true);
     }
 }
