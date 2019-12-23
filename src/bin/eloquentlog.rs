@@ -21,13 +21,17 @@ use config::Config;
     about = "\nA command line interface for Eloquentlog."
 )]
 pub struct Opts {
+    /// Path to config file
+    #[structopt(short, long, default_value = "")]
+    config_file: String,
+
     /// Run debug mode
     #[structopt(short, long)]
     debug: bool,
 
-    /// Path to config file
+    /// Server URL
     #[structopt(short, long, default_value = "")]
-    config_file: String,
+    server_url: String,
 }
 
 impl Default for Opts {
@@ -35,8 +39,9 @@ impl Default for Opts {
         let config_file =
             Config::default_config_file().to_str().unwrap().to_string();
         Opts {
-            debug: false,
             config_file,
+            debug: false,
+            server_url: "".to_string(),
         }
     }
 }
@@ -44,8 +49,9 @@ impl Default for Opts {
 impl From<Opts> for runner::Args {
     fn from(item: Opts) -> Self {
         Self {
-            debug: item.debug,
             config_file: item.config_file,
+            debug: item.debug,
+            server_url: item.server_url,
         }
     }
 }
