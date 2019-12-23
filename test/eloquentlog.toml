@@ -1,2 +1,9 @@
-secret = "secret"
+[credential]
+api_key = "<api-key>"
+secret = "<secret>"
 
+[server]
+url = "https://eloquentlog.com"
+
+[user]
+name = "<username>"

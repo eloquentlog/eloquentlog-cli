@@ -6,8 +6,9 @@ use crate::config::Config;
 
 #[derive(Debug)]
 pub struct Args {
-    pub debug: bool,
     pub config_file: String,
+    pub debug: bool,
+    pub server_url: String,
 }
 
 impl Default for Args {
@@ -15,8 +16,9 @@ impl Default for Args {
         let config_file =
             Config::default_config_file().to_str().unwrap().to_string();
         Self {
-            debug: false,
             config_file,
+            debug: false,
+            server_url: "".to_string(),
         }
     }
 }

@@ -9,10 +9,28 @@ use crate::runner::Args;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub secret: String,
+    pub credential: Credential,
+    pub server: Server,
+    pub user: User,
 
     #[serde(skip)]
     pub args: Args,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Credential {
+    pub api_key: String,
+    pub secret: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Server {
+    pub url: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct User {
+    pub name: String,
 }
 
 // defaults
@@ -20,7 +38,15 @@ pub const CONFIG_FILE: &str = "eloquentlog.toml";
 pub const CONFIG_ROOT: &str = "eloquentlog";
 
 const DEFAULT_CONTENTS: &str = r#"
-secret = "secret"
+[credential]
+api_key = "<api_key>"
+secret = "<secret>"
+
+[server]
+url = "https://eloquentlog.com"
+
+[user]
+name = "<username>"
 "#;
 
 impl Config {
@@ -74,6 +100,32 @@ impl Config {
     }
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        let credential = Credential {
+            api_key: "".to_string(),
+            secret: "".to_string(),
+        };
+
+        let server = Server {
+            url: "https://eloquentlog.com/".to_string(),
+        };
+
+        let user = User {
+            name: "".to_string(),
+        };
+
+        Self {
+            credential,
+            server,
+            user,
+            args: Args {
+                ..Default::default()
+            },
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -98,8 +150,8 @@ mod test {
         ];
         for (args, want) in tests.into_iter() {
             let config = Config {
-                secret: "".to_string(),
                 args,
+                ..Default::default()
             };
             assert_eq!(config.is_debug(), want);
         }
@@ -107,13 +159,8 @@ mod test {
 
     #[test]
     fn test_is_valid() {
-        let args = Args {
-            ..Default::default()
-        };
-
         let config = Config {
-            secret: "".to_string(),
-            args,
+            ..Default::default()
         };
         assert_eq!(config.is_valid(), true);
     }
