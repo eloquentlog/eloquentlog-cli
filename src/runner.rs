@@ -3,10 +3,26 @@ use std::io::ErrorKind;
 use std::path::PathBuf;
 
 use crate::config::Config;
-use crate::Opts;
 
-fn invoke(mut config: Config, opts: Opts) -> Result<(), &'static str> {
-    config.opts = opts;
+#[derive(Debug)]
+pub struct Args {
+    pub debug: bool,
+    pub config_file: String,
+}
+
+impl Default for Args {
+    fn default() -> Self {
+        let config_file =
+            Config::default_config_file().to_str().unwrap().to_string();
+        Self {
+            debug: false,
+            config_file,
+        }
+    }
+}
+
+fn invoke(mut config: Config, args: Args) -> Result<(), &'static str> {
+    config.args = args;
 
     if !config.is_valid() {
         return Err("Usage: eloquentlog <ACTION> <OPTION>, ...");
@@ -18,19 +34,19 @@ fn invoke(mut config: Config, opts: Opts) -> Result<(), &'static str> {
     Ok(())
 }
 
-pub fn run(opts: Opts) -> Result<(), &'static str> {
+pub fn run(args: Args) -> Result<(), &'static str> {
     if fs::create_dir_all(Config::config_home()).is_err() {
         return Err("");
     }
 
-    let config_file = if !opts.config_file.is_empty() {
-        Some(PathBuf::from(&opts.config_file))
+    let config_file = if !args.config_file.is_empty() {
+        Some(PathBuf::from(&args.config_file))
     } else {
         None
     };
 
     match Config::load_from_local_file(config_file) {
-        Ok(c) => invoke(c, opts),
+        Ok(c) => invoke(c, args),
         Err(e) if e.kind() == ErrorKind::NotFound => {
             // TODO: ask
             match Config::create_file() {
@@ -38,7 +54,7 @@ pub fn run(opts: Opts) -> Result<(), &'static str> {
                     eprintln!("err: {}", e);
                     Err("")
                 }
-                Ok(c) => invoke(c, opts),
+                Ok(c) => invoke(c, args),
             }
         }
         Err(e) => {

@@ -10,7 +10,7 @@ license = "GPL-3.0"
 
 [[bin]]
 name = "eloquentlog"
-path = "src/main.rs"
+path = "src/bin/eloquentlog.rs"
 
 [[test]]
 name = "integration"
