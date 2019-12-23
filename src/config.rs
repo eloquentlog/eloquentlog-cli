@@ -5,14 +5,14 @@ use std::path::PathBuf;
 use dirs;
 use serde::Deserialize;
 
-use crate::Opts;
+use crate::runner::Args;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub secret: String,
 
     #[serde(skip)]
-    pub opts: Opts,
+    pub args: Args,
 }
 
 // defaults
@@ -65,7 +65,7 @@ impl Config {
     }
 
     pub fn is_debug(&self) -> bool {
-        self.opts.debug
+        self.args.debug
     }
 
     pub fn is_valid(&self) -> bool {
@@ -82,24 +82,24 @@ mod test {
     fn test_is_debug() {
         let tests = vec![
             (
-                Opts {
+                Args {
                     debug: false,
                     ..Default::default()
                 },
                 false,
             ),
             (
-                Opts {
+                Args {
                     debug: true,
                     ..Default::default()
                 },
                 true,
             ),
         ];
-        for (opts, want) in tests.into_iter() {
+        for (args, want) in tests.into_iter() {
             let config = Config {
                 secret: "".to_string(),
-                opts,
+                args,
             };
             assert_eq!(config.is_debug(), want);
         }
@@ -107,13 +107,13 @@ mod test {
 
     #[test]
     fn test_is_valid() {
-        let opts = Opts {
+        let args = Args {
             ..Default::default()
         };
 
         let config = Config {
             secret: "".to_string(),
-            opts,
+            args,
         };
         assert_eq!(config.is_valid(), true);
     }

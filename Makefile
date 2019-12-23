@@ -99,6 +99,10 @@ build\:release:  ## Create release build
 # }}}
 
 # other utilities -- {{{
+doc:
+	@cargo doc --offline --document-private-items --lib --open
+.PHONY: doc
+
 clean:  ## Tidy up
 	@cargo clean
 .PHONY: clean

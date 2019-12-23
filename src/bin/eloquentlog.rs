@@ -5,15 +5,12 @@
 //! ```zsh
 //! % eloquentlog --help
 //! ```
-extern crate dirs;
-extern crate serde;
 extern crate structopt;
-extern crate toml;
 
 use structopt::StructOpt;
 
-mod config;
-mod runner;
+use eloquentlog_cli::config;
+use eloquentlog_cli::runner;
 
 use config::Config;
 
@@ -44,9 +41,18 @@ impl Default for Opts {
     }
 }
 
+impl From<Opts> for runner::Args {
+    fn from(item: Opts) -> Self {
+        Self {
+            debug: item.debug,
+            config_file: item.config_file,
+        }
+    }
+}
+
 fn main() {
-    let opts = Opts::from_args();
-    std::process::exit(match runner::run(opts) {
+    let args = runner::Args::from(Opts::from_args());
+    std::process::exit(match runner::run(args) {
         Ok(_) => 0,
         Err(e) => {
             eprintln!("{:?}", e);
