@@ -2,6 +2,7 @@ use std::fs;
 use std::io::{stdin, stdout, ErrorKind, Write};
 use std::path::PathBuf;
 
+use crate::client::Client;
 use crate::config::Config;
 
 #[derive(Debug)]
@@ -32,7 +33,12 @@ fn invoke(mut config: Config, args: Args) -> Result<(), &'static str> {
     if config.is_debug() {
         println!("debug mode: on");
     }
-    println!("Hoi");
+
+    // FIXME
+    let client = Client::new(config);
+    let result = client.get_messages();
+
+    println!("Hoi: {:#?}", result);
     Ok(())
 }
 
