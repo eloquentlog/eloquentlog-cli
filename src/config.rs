@@ -37,8 +37,7 @@ pub struct User {
 pub const CONFIG_FILE: &str = "eloquentlog.toml";
 pub const CONFIG_ROOT: &str = "eloquentlog";
 
-const DEFAULT_CONTENTS: &str = r#"
-[credential]
+const DEFAULT_CONTENTS: &str = r#"[credential]
 api_key = "<api_key>"
 secret = "<secret>"
 
@@ -66,13 +65,11 @@ impl Config {
         .collect()
     }
 
-    pub fn create_file() -> Result<Self, std::io::Error> {
+    pub fn create_file() -> Result<(), std::io::Error> {
         let config_file = Self::default_config_file();
         let mut file = File::create(&config_file)?;
         file.write_all(DEFAULT_CONTENTS.to_string().into_bytes().as_slice())?;
-        file.sync_data()?;
-
-        Self::load_from_local_file(Some(config_file))
+        file.sync_data()
     }
 
     pub fn load_from_local_file(
