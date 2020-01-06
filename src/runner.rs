@@ -24,9 +24,7 @@ impl Default for Args {
     }
 }
 
-fn invoke(mut config: Config, args: Args) -> Result<(), &'static str> {
-    config.args = args;
-
+fn invoke(config: Config) -> Result<(), &'static str> {
     if !config.is_valid() {
         return Err("Usage: eloquentlog <ACTION> <OPTION>, ...");
     }
@@ -74,7 +72,7 @@ pub fn run(args: Args) -> Result<(), &'static str> {
     };
 
     match Config::load_from_local_file(config_file) {
-        Ok(c) => invoke(c, args),
+        Ok(c) => invoke(c.update(args)),
         Err(e) if e.kind() == ErrorKind::NotFound => {
             if !want_config_file() {
                 println!("Quitting.");

@@ -7,3 +7,6 @@ url = "https://eloquentlog.com"
 
 [user]
 name = "<username>"
+
+[log]
+severity = "warn"
