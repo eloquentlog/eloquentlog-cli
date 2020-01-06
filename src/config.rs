@@ -48,6 +48,13 @@ url = "https://eloquentlog.com"
 name = "<username>"
 "#;
 
+fn format_url(url: String) -> String {
+    if url.ends_with('/') {
+        return url[..(url.len() - 1)].to_string();
+    }
+    url
+}
+
 impl Config {
     pub fn config_home() -> PathBuf {
         [dirs::config_dir().unwrap(), PathBuf::from(CONFIG_ROOT)]
@@ -82,8 +89,8 @@ impl Config {
         let mut contents = String::new();
         file.read_to_string(&mut contents)?;
 
-        // TODO
-        let c: Config = toml::from_str(&contents).unwrap();
+        let mut c: Config = toml::from_str(&contents).unwrap();
+        c.server.url = format_url(c.server.url);
         Ok(c)
     }
 
@@ -128,7 +135,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_is_debug() {
+    fn test_is_debug_via_args() {
         let tests = vec![
             (
                 Args {
