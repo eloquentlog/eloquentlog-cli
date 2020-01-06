@@ -10,49 +10,42 @@ stages:
   - build
 
 .vet-tools: &vet-tools
-  image: grauwoelfchen/rust-vet-tools:stable
-  except:
-    - tags
-
-.rust: &rust
-  image: grauwoelfchen/rust:stable
+  image: grauwoelfchen/rust-vet-tools:1.40.0-stable
   before_script:
     - rustc --version
     - cargo --version
+    - cargo fmt --version
+    - cargo clippy --version
+    - kcov --version
+    - *vendor
+    - mkdir -p .git/hooks
+
+.rust: &rust
+  image: grauwoelfchen/rust:1.40.0-stable
+  before_script:
+    - rustc --version
+    - cargo --version
+    - cargo fmt --version
+    - cargo clippy --version
     - *vendor
     - mkdir -p .git/hooks
 
 # -- verify {{{
 check:
   stage: verify
-  <<: *vet-tools
-  before_script:
-    - rustc --version
-    - cargo --version
-    - mkdir -p .git/hooks
+  <<: *rust
   script:
     - make verify:check
 
 format:
   stage: verify
-  <<: *vet-tools
-  before_script:
-    - rustc --version
-    - cargo --version
-    - cargo fmt --version
-    - mkdir -p .git/hooks
+  <<: *rust
   script:
     - make verify:format
 
 lint:
   stage: verify
-  <<: *vet-tools
-  before_script:
-    - rustc --version
-    - cargo --version
-    - cargo clippy --version
-    - *vendor
-    - mkdir -p .git/hooks
+  <<: *rust
   script:
     - make verify:lint
 # }}}
@@ -61,17 +54,13 @@ lint:
 test:
   stage: test
   <<: *vet-tools
-  before_script:
-    - rustc --version
-    - cargo --version
-    - kcov --version
-    - *vendor
-    - mkdir -p .git/hooks
   script:
     # test & get covered
     - KCOV_PATH=/usr/bin/kcov make coverage
   after_script:
     - cat target/coverage/index.json
+  except:
+    - tags
 # }}}
 
 # -- build {{{
