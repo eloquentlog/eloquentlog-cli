@@ -12,6 +12,7 @@ pub struct Config {
     pub credential: Credential,
     pub server: Server,
     pub user: User,
+    pub log: Log,
 
     #[serde(skip)]
     pub args: Args,
@@ -33,6 +34,11 @@ pub struct User {
     pub name: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct Log {
+    pub severity: String,
+}
+
 // defaults
 pub const CONFIG_FILE: &str = "eloquentlog.toml";
 pub const CONFIG_ROOT: &str = "eloquentlog";
@@ -46,6 +52,9 @@ url = "https://eloquentlog.com"
 
 [user]
 name = "<username>"
+
+[log]
+severity = "warn"
 "#;
 
 fn format_url(url: String) -> String {
@@ -94,8 +103,16 @@ impl Config {
         Ok(c)
     }
 
+    /// apply fields updates via args.
+    pub fn update(mut self, args: Args) -> Self {
+        self.server.url = format_url(args.server_url);
+        self.log.severity =
+            (if args.debug { "debug" } else { "warn" }).to_string();
+        self
+    }
+
     pub fn is_debug(&self) -> bool {
-        self.args.debug
+        self.log.severity == "debug"
     }
 
     pub fn is_valid(&self) -> bool {
@@ -119,10 +136,16 @@ impl Default for Config {
             name: "".to_string(),
         };
 
+        let log = Log {
+            severity: "warn".to_string(),
+        };
+
         Self {
             credential,
             server,
             user,
+            log,
+
             args: Args {
                 ..Default::default()
             },
@@ -153,8 +176,39 @@ mod test {
             ),
         ];
         for (args, want) in tests.into_iter() {
+            let mut config = Config {
+                ..Default::default()
+            };
+            config = config.update(args);
+            assert_eq!(config.is_debug(), want);
+        }
+    }
+
+    #[test]
+    fn test_is_debug_via_toml() {
+        let tests = vec![
+            (
+                Log {
+                    severity: "warn".to_string(),
+                },
+                false,
+            ),
+            (
+                Log {
+                    severity: "info".to_string(),
+                },
+                false,
+            ),
+            (
+                Log {
+                    severity: "debug".to_string(),
+                },
+                true,
+            ),
+        ];
+        for (log, want) in tests.into_iter() {
             let config = Config {
-                args,
+                log,
                 ..Default::default()
             };
             assert_eq!(config.is_debug(), want);
