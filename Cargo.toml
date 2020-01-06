@@ -21,9 +21,13 @@ panic = "abort"
 
 [dependencies]
 dirs = "2.0"
+reqwest = "0.9"
 serde = { version = "1.0", features = ["derive"] }
 structopt = { version = "0.3", default-features = false }
 toml = "0.5"
+
+[dev-dependencies]
+mockito = "0.22"
 
 [dev-dependencies.cargo-husky]
 version = "1"
