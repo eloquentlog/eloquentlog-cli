@@ -21,7 +21,7 @@ stages:
       - vendor
 
 .vet-tools: &vet-tools
-  image: grauwoelfchen/rust-vet-tools:1.40.0-stable
+  image: registry.gitlab.com/grauwoelfchen/portolan/rust-vet-tools:1.40.0-stable
   before_script:
     - rustc --version
     - cargo --version
@@ -33,7 +33,7 @@ stages:
   <<: *cache
 
 .rust: &rust
-  image: grauwoelfchen/rust:1.40.0-stable
+  image: registry.gitlab.com/grauwoelfchen/portolan/rust:1.40.0-stable
   before_script:
     - rustc --version
     - cargo --version
