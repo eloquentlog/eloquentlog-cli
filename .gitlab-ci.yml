@@ -1,5 +1,4 @@
 stages:
-  - setup
   - verify
   - test
   - build
@@ -12,7 +11,11 @@ stages:
 
 .cache: &cache
   cache:
-    key: "${CARGO_LOCK_CHECKSUM}"
+    key:
+      files:
+        - Cargo.lock
+      # NOTE: set an environment variable `CI_CACHE_VERSION`
+      prefix: "${CI_PROJECT_NAME}-cache-${CI_CACHE_VERSION}"
     paths:
       - .cargo
       - vendor
@@ -39,25 +42,6 @@ stages:
     - *vendor
     - mkdir -p .git/hooks
   <<: *cache
-
-# -- setup {{{
-setup-checksum:
-  stage: setup
-  image: grauwoelfchen/rust-vet-tools:1.40.0-stable
-  variables:
-    API_HEADER: "PRIVATE-TOKEN: ${GITLAB_PRIVATE_TOKEN}"
-    GITLAB_HOST: gitlab.com
-    GITLAB_API_URL: "https://${GITLAB_HOST}/api/v4"
-    # GITLAB_PROJECT_ID:
-    # GITLAB_PRIVATE_TOKEN:
-  script:
-    - curl --version
-    - export VALUE=$(md5sum Cargo.lock | awk '{print $1}') &&
-      export KEY="CARGO_LOCK_CHECKSUM" &&
-      curl --silent --request PUT --header "${API_HEADER}"
-      "${GITLAB_API_URL}/projects/${GITLAB_PROJECT_ID}/variables/${KEY}"
-      --form "value=${VALUE}"
-# }}}
 
 # -- verify {{{
 check:
