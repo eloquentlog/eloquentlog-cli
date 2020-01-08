@@ -105,7 +105,9 @@ impl Config {
 
     /// apply fields updates via args.
     pub fn update(mut self, args: Args) -> Self {
-        self.server.url = format_url(args.server_url);
+        if !args.server_url.is_empty() {
+            self.server.url = format_url(args.server_url);
+        }
         self.log.severity =
             (if args.debug { "debug" } else { "warn" }).to_string();
         self
