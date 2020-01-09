@@ -54,17 +54,24 @@ verify: | verify\:all
 # }}}
 
 # test -- {{{
-test\:unit:  ## Run unit tests
-	@cargo test --bin eloquentlog
+test\:lib:  ## Run tests in lib [alias: test:unit]
+	@cargo test --lib
+.PHONY: test\:lib
+
+test\:unit: | test\:lib
 .PHONY: test\:unit
+
+test\:bin:  ## Run tests for eloquentlog command
+	@cargo test --bin eloquentlog
+.PHONY: test\:bin
+
+test\:doc:  ## Run tests in doc
+	@cargo test --doc
+.PHONY: test\:doc
 
 test\:integration:  ## Run integration tests
 	@cargo test --test integration
 .PHONY: test\:integration
-
-test\:doc:  ## Run doc tests
-	@cargo test --doc
-.PHONY: test\:doc
 
 test\:all:  ## Run unit tests and integration tests [alias: test]
 	@cargo test --tests
@@ -75,10 +82,10 @@ test: | test\:all
 # }}}
 
 # coverage -- {{{
-coverage:  ## Generate coverage report of unit tests only for lib using kcov [alias: cov]
-	@cargo test --bin eloquentlog --no-run
+coverage:  ## Generate coverage report from tests for lib using kcov [alias: cov]
+	@cargo test --lib --no-run
 	@./.tool/setup-kcov
-	./.tool/get-covered eloquentlog
+	./.tool/get-covered libeloquentlog
 .PHONY: coverage
 
 cov: | coverage
