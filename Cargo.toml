@@ -8,6 +8,10 @@ edition = "2018"
 keywords = []
 license = "GPL-3.0"
 
+[lib]
+name = "libeloquentlog"
+path = "src/lib.rs"
+
 [[bin]]
 name = "eloquentlog"
 path = "src/bin/eloquentlog.rs"

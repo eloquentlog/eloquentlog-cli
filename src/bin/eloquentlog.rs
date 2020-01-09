@@ -9,8 +9,8 @@ extern crate structopt;
 
 use structopt::StructOpt;
 
-use eloquentlog_cli::config;
-use eloquentlog_cli::runner;
+use libeloquentlog::config;
+use libeloquentlog::runner;
 
 use config::Config;
 
