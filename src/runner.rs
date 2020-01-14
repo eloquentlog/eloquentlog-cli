@@ -36,7 +36,7 @@ fn invoke(config: Config) -> Result<(), &'static str> {
     let client = Client::new(config);
     let result = client.get_messages();
 
-    println!("Hoi: {:#?}", result);
+    println!("err: {:#?}", result);
     Ok(())
 }
 
