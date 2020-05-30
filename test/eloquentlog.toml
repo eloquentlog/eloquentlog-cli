@@ -1,6 +1,5 @@
 [credential]
-api_key = "<api-key>"
-secret = "<secret>"
+secret = "secret"
 
 [server]
 url = "https://eloquentlog.com"

@@ -38,9 +38,8 @@ fn invoke(action: &str, config: Config) -> Result<(), &'static str> {
         "get" => {
             // FIXME
             let client = Client::new(config);
-            let result = client.get_messages();
-
-            println!("err: {:#?}", result);
+            let result = client.lrange_message("dummy".to_string(), 0, 9);
+            println!("res: {:#?}", result);
         }
         _ => {
             eprintln!("unknown action: {}", action);

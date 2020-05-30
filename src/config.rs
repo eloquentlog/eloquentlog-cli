@@ -19,7 +19,6 @@ pub struct Config {
 
 #[derive(Debug, Deserialize)]
 pub struct Credential {
-    pub api_key: String,
     pub secret: String,
 }
 
@@ -43,7 +42,6 @@ pub const CONFIG_FILE: &str = "eloquentlog.toml";
 pub const CONFIG_ROOT: &str = "eloquentlog";
 
 const DEFAULT_CONTENTS: &str = r#"[credential]
-api_key = "<api_key>"
 secret = "<secret>"
 
 [server]
@@ -125,7 +123,6 @@ impl Config {
 impl Default for Config {
     fn default() -> Self {
         let credential = Credential {
-            api_key: "".to_string(),
             secret: "".to_string(),
         };
 
