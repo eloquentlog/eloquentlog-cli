@@ -5,8 +5,13 @@
 //! ```zsh
 //! % eloquentlog --help
 //! ```
+extern crate clap;
 extern crate structopt;
 
+use std::env;
+use std::io::{self, Write};
+
+use clap::App;
 use structopt::StructOpt;
 
 use libeloquentlog::config;
@@ -34,6 +39,15 @@ pub struct Opts {
     server_url: String,
 }
 
+impl Opts {
+    pub fn print_help(self, app: &mut App) {
+        if app.print_help().is_ok() {
+            let mut out = io::stdout();
+            let _ = writeln!(out);
+        }
+    }
+}
+
 impl Default for Opts {
     fn default() -> Opts {
         let config_file =
@@ -46,19 +60,43 @@ impl Default for Opts {
     }
 }
 
-impl From<Opts> for runner::Args {
-    fn from(item: Opts) -> Self {
+impl From<&Opts> for runner::Args {
+    fn from(opts: &Opts) -> Self {
         Self {
-            config_file: item.config_file,
-            debug: item.debug,
-            server_url: item.server_url,
+            config_file: opts.config_file.to_owned(),
+            debug: opts.debug,
+            server_url: opts.server_url.to_owned(),
+            command: "".to_string(),
         }
     }
 }
 
+const COMMANDS: [&str; 1] = ["get"];
+
 fn main() {
-    let args = runner::Args::from(Opts::from_args());
-    std::process::exit(match runner::run(args) {
+    let mut app = Opts::clap();
+
+    let v_args: Vec<_> = env::args().collect();
+
+    // get only global args start with -
+    let opts =
+        Opts::from_iter(&mut v_args.iter().filter(|s| s.starts_with('-')));
+    let args = runner::Args::from(&opts);
+
+    // cmd
+    let c = v_args.iter().skip(1).find(|x| !x.starts_with('-'));
+    if c.is_none() {
+        opts.print_help(&mut app);
+        return;
+    }
+    let cmd = c.unwrap();
+    if !COMMANDS.contains(&cmd.as_str()) {
+        eprintln!("no such command: {}", cmd);
+        opts.print_help(&mut app);
+        return;
+    }
+
+    std::process::exit(match runner::run(&cmd.as_str(), args) {
         Ok(_) => 0,
         Err(e) => {
             eprintln!("{:?}", e);

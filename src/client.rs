@@ -1,4 +1,3 @@
-use reqwest;
 use reqwest::header::{
     HeaderMap, HeaderValue, ACCEPT, AUTHORIZATION, USER_AGENT,
 };
@@ -55,6 +54,7 @@ impl Client {
             resource = "messages",
             params = self.build_params(),
         );
+        dbg!(&url);
         if self.config.is_debug() {
             println!("url: {}", url);
         }
