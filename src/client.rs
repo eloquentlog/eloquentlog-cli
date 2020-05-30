@@ -18,6 +18,10 @@ impl Client {
         // default headers
         m.insert(USER_AGENT, HeaderValue::from_static("eloquentlog-cli"));
         m.insert(ACCEPT, HeaderValue::from_static("application/json"));
+        m.insert(
+            "X-Requested-With",
+            HeaderValue::from_static("XMLHttpRequest"),
+        );
 
         if self.config.credential.secret.is_empty() {
             return m;
@@ -26,7 +30,7 @@ impl Client {
         m.insert(
             AUTHORIZATION,
             HeaderValue::from_str(&format!(
-                "Bearer {}",
+                "Token {}",
                 self.config.credential.secret,
             ))
             .map_err(|e| {
@@ -41,30 +45,44 @@ impl Client {
     }
 
     fn build_params(&self) -> String {
-        if !self.config.credential.api_key.is_empty() {
-            return format!("api_key={}", self.config.credential.api_key);
+        let params = "".to_string();
+        if params.is_empty() {
+            return params;
         }
-        "".to_string()
+        format!("?{}", params)
     }
 
-    pub fn get_messages(&self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn lrange_message(
+        &self,
+        namespace: String,
+        start: u64,
+        stop: u64,
+    ) -> Result<String, String> {
         let url = format!(
-            "{base_url}/_api/{resource}?{params}",
+            "{base_url}/_api/{resource}/{action}{params}",
             base_url = self.config.server.url,
-            resource = "messages",
+            resource = "message",
+            action = format!("lrange/{}/{}/{}", namespace, start, stop),
             params = self.build_params(),
         );
-        dbg!(&url);
         if self.config.is_debug() {
             println!("url: {}", url);
         }
 
         let agent = reqwest::Client::new();
-        let res = agent.get(&url).headers(self.build_headers()).send()?;
+        let res = agent
+            .get(&url)
+            .headers(self.build_headers())
+            .send()
+            .map_err(|e| {
+                println!("err: {}", e);
+                "".to_string()
+            })?;
         if self.config.is_debug() {
             println!("res: {:#?}", res);
         }
-        Ok(())
+        // FIXME
+        Ok(format!("{:#?}", res))
     }
 }
 
@@ -84,18 +102,18 @@ mod test {
         let client = Client::new(config);
         let result = client.build_headers();
 
-        assert_eq!(result.len(), 2);
+        assert_eq!(result.len(), 3);
 
         let mut headers = HeaderMap::new();
         headers.insert(USER_AGENT, HeaderValue::from_static("eloquentlog-cli"));
         headers.insert(ACCEPT, "application/json".parse().unwrap());
+        headers.insert("X-Requested-With", "XMLHttpRequest".parse().unwrap());
         assert_eq!(result, headers);
     }
 
     #[test]
     fn test_build_headers_with_config_contains_invalid_credential() {
         let credential = Credential {
-            api_key: "api-key".to_string(),
             secret: "secret\n".to_string(),
         };
         let config = Config {
@@ -109,13 +127,13 @@ mod test {
         headers.insert(USER_AGENT, "eloquentlog-cli".parse().unwrap());
         headers.insert(ACCEPT, "application/json".parse().unwrap());
         headers.insert(AUTHORIZATION, "".parse().unwrap());
+        headers.insert("X-Requested-With", "XMLHttpRequest".parse().unwrap());
         assert_eq!(result, headers);
     }
 
     #[test]
     fn test_build_headers_with_config_contains_credential() {
         let credential = Credential {
-            api_key: "api-key".to_string(),
             secret: "secret".to_string(),
         };
         let config = Config {
@@ -128,7 +146,8 @@ mod test {
         let mut headers = HeaderMap::new();
         headers.insert(USER_AGENT, "eloquentlog-cli".parse().unwrap());
         headers.insert(ACCEPT, "application/json".parse().unwrap());
-        headers.insert(AUTHORIZATION, "Bearer secret".parse().unwrap());
+        headers.insert(AUTHORIZATION, "Token secret".parse().unwrap());
+        headers.insert("X-Requested-With", "XMLHttpRequest".parse().unwrap());
         assert_eq!(result, headers);
     }
 
@@ -144,42 +163,11 @@ mod test {
     }
 
     #[test]
-    fn test_build_params_with_config_contains_empty_api_key() {
-        let credential = Credential {
-            api_key: "".to_string(),
-            secret: "secret".to_string(),
-        };
-        let config = Config {
-            credential,
-            ..Default::default()
-        };
-        let client = Client::new(config);
-        let result = client.build_params();
-
-        assert_eq!(result, "");
-    }
-
-    #[test]
-    fn test_build_params_with_config_contains_api_key() {
-        let credential = Credential {
-            api_key: "api-key".to_string(),
-            secret: "secret".to_string(),
-        };
-        let config = Config {
-            credential,
-            ..Default::default()
-        };
-        let client = Client::new(config);
-        let result = client.build_params();
-
-        assert_eq!(result, "api_key=api-key");
-    }
-
-    #[test]
-    fn test_get_messages() {
-        let _m = mock("GET", "/_api/messages?api_key=<api-key>")
+    fn test_lrange_message() {
+        let _m = mock("GET", "/_api/message/lrange/test/0/9")
             .with_status(200)
             .with_header("content-type", "application/json")
+            .with_header("x-requested-with", "XMLHttpRequest")
             .with_body("{}")
             .create();
 
@@ -191,7 +179,7 @@ mod test {
             ..Default::default()
         };
         let client = Client::new(config);
-        let res = client.get_messages();
+        let res = client.lrange_message("dummy".to_string(), 0, 9);
 
         assert!(res.is_ok());
     }
