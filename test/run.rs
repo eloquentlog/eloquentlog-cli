@@ -16,6 +16,7 @@ fn test_run_with_unknown_option() {
 }
 
 #[test]
+#[ignore]
 fn test_run_in_debug_mode() {
     let msg = "debug mode: on";
 

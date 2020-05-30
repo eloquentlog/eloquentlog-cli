@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
 
-use dirs;
 use serde::Deserialize;
 
 use crate::runner::Args;

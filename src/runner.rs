@@ -10,6 +10,7 @@ pub struct Args {
     pub config_file: String,
     pub debug: bool,
     pub server_url: String,
+    pub command: String,
 }
 
 impl Default for Args {
@@ -20,11 +21,12 @@ impl Default for Args {
             config_file,
             debug: false,
             server_url: "".to_string(),
+            command: "".to_string(),
         }
     }
 }
 
-fn invoke(config: Config) -> Result<(), &'static str> {
+fn invoke(action: &str, config: Config) -> Result<(), &'static str> {
     if !config.is_valid() {
         return Err("Usage: eloquentlog <ACTION> <OPTION>, ...");
     }
@@ -32,11 +34,19 @@ fn invoke(config: Config) -> Result<(), &'static str> {
         println!("debug mode: on");
     }
 
-    // FIXME
-    let client = Client::new(config);
-    let result = client.get_messages();
+    match action {
+        "get" => {
+            // FIXME
+            let client = Client::new(config);
+            let result = client.get_messages();
 
-    println!("err: {:#?}", result);
+            println!("err: {:#?}", result);
+        }
+        _ => {
+            eprintln!("unknown action: {}", action);
+        }
+    }
+
     Ok(())
 }
 
@@ -60,7 +70,7 @@ fn want_config_file() -> bool {
     }
 }
 
-pub fn run(args: Args) -> Result<(), &'static str> {
+pub fn run(cmd: &str, args: Args) -> Result<(), &'static str> {
     if fs::create_dir_all(Config::config_home()).is_err() {
         return Err("");
     }
@@ -72,7 +82,7 @@ pub fn run(args: Args) -> Result<(), &'static str> {
     };
 
     match Config::load_from_local_file(config_file) {
-        Ok(c) => invoke(c.update(args)),
+        Ok(c) => invoke(cmd, c.update(args)),
         Err(e) if e.kind() == ErrorKind::NotFound => {
             if !want_config_file() {
                 println!("Quitting.");
