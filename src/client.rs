@@ -30,7 +30,7 @@ impl Client {
         m.insert(
             AUTHORIZATION,
             HeaderValue::from_str(&format!(
-                "Token {}",
+                "Access-Token {}",
                 self.config.credential.secret,
             ))
             .map_err(|e| {
@@ -146,7 +146,7 @@ mod test {
         let mut headers = HeaderMap::new();
         headers.insert(USER_AGENT, "eloquentlog-cli".parse().unwrap());
         headers.insert(ACCEPT, "application/json".parse().unwrap());
-        headers.insert(AUTHORIZATION, "Token secret".parse().unwrap());
+        headers.insert(AUTHORIZATION, "Access-Token secret".parse().unwrap());
         headers.insert("X-Requested-With", "XMLHttpRequest".parse().unwrap());
         assert_eq!(result, headers);
     }
