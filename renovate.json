@@ -4,7 +4,8 @@
   "branchPrefix": "dep-",
   "draftPR": true,
   "labels": ["dependency"],
+  "timezone": "UTC",
   "schedule": [
-    "after 10pm and before 5am"
+    "before 14:00"
   ]
 }
