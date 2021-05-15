@@ -21,7 +21,7 @@ stages:
       - vendor
 
 .vet-tools: &vet-tools
-  image: registry.gitlab.com/grauwoelfchen/portolan/rust-vet-tools:1.40.0-stable
+  image: registry.gitlab.com/grauwoelfchen/portolan/rust-vet-tools:stable
   before_script:
     - rustc --version
     - cargo --version
@@ -33,7 +33,7 @@ stages:
   <<: *cache
 
 .rust: &rust
-  image: registry.gitlab.com/grauwoelfchen/portolan/rust:1.40.0-stable
+  image: registry.gitlab.com/grauwoelfchen/portolan/rust:stable
   before_script:
     - rustc --version
     - cargo --version
@@ -43,7 +43,6 @@ stages:
     - mkdir -p .git/hooks
   <<: *cache
 
-# -- verify {{{
 check:
   stage: verify
   <<: *rust
@@ -61,22 +60,16 @@ lint:
   <<: *rust
   script:
     - make verify:lint
-# }}}
 
-# -- test {{{
 test:
   stage: test
   <<: *vet-tools
   script:
-    # test & get covered
-    - KCOV_PATH=/usr/bin/kcov make coverage
-  after_script:
-    - cat target/coverage/index.json
+    - make coverage:all
+  coverage: /"covered":"(\d+(?:\.\d+)?)",/
   except:
     - tags
-# }}}
 
-# -- build {{{
 build:
   stage: build
   <<: *rust
@@ -92,4 +85,3 @@ release:
     - make build:release
   only:
     - tags
-# }}}
