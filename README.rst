@@ -64,8 +64,8 @@ Vet
 
 .. code:: zsh
 
-   # check code using all vet:xxx targets
-   % make vet:all
+   # check code using all verify targets
+   % make verify:all
 
 Test
 ~~~~
@@ -82,28 +82,22 @@ Coverage
 
 .. code:: zsh
 
-   # (optional)
-   % .tools/setup-kcov
-
-   % make coverage
+   % make coverage:all
 
 CI
 ~~
 
-Run CI jobs on local docker conatiner (Gentoo Linux) using gitlab-runner.
-See `.gitlab-ci.yml`.
+You can run any CI job a on local docker conatiner (Gentoo Linux) by using
+gitlab-runner. See `.gitlab-ci.yml`.
 
 
 .. code:: zsh
 
-   # install gitlab-runner into .tools
-   % .tools/setup-gitlab-runner
-
    # prepare environment variables for CI via .env.ci
    % cp .env.ci.sample .env
 
-   # e.g. test (see .gitlab-ci.yml)
-   % .tools/ci-runner test
+   # e.g. test (see Makefile)
+   % make runner-test
 
 
 License
