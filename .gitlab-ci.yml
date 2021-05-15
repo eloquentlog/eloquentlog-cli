@@ -66,7 +66,7 @@ test:
   <<: *vet-tools
   script:
     - make coverage:all
-  coverage: /"covered":"(\d+(?:\.\d+)?)",/
+  coverage: /^(\d+(?:\.\d+)?)$/
   except:
     - tags
 
