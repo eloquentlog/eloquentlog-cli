@@ -3,5 +3,8 @@
   "enabledManagers": ["cargo"],
   "branchPrefix": "dep-",
   "draftPR": true,
-  "labels": ["dependency"]
+  "labels": ["dependency"],
+  "schedule": [
+    "after 10pm and before 5am"
+  ]
 }
