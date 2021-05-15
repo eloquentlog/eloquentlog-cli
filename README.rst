@@ -1,11 +1,11 @@
 Eloquentlog CLI
 ===============
 
-.. image:: https://gitlab.com/eloquentlog/eloquentlog-cli/badges/master/pipeline.svg
-   :target: https://gitlab.com/eloquentlog/eloquentlog-cli/commits/master
+.. image:: https://gitlab.com/eloquentlog/eloquentlog-cli/badges/trunk/pipeline.svg
+   :target: https://gitlab.com/eloquentlog/eloquentlog-cli/commits/trunk
 
-.. image:: https://gitlab.com/eloquentlog/eloquentlog-cli/badges/master/coverage.svg
-   :target: https://gitlab.com/eloquentlog/eloquentlog-cli/commits/master
+.. image:: https://gitlab.com/eloquentlog/eloquentlog-cli/badges/trunk/coverage.svg
+   :target: https://gitlab.com/eloquentlog/eloquentlog-cli/commits/trunk
 
 .. code:: text
 
@@ -116,7 +116,7 @@ License
    ┗━╸┗━╸┗━┛┗┻┛┗━┛┗━╸╹ ╹ ╹ ┗━╸┗━┛┗━┛
 
    CLI
-   Copyright 2019 Lupine Software LLC
+   Copyright 2019-2021 Lupine Software LLC
 
 
 ``GPL-3.0``.
