@@ -1,4 +1,5 @@
 Sat 15 May 2021 Yasuhiro Яша Asaka <yasuhiro.asaka@grauwoelfchen.net>
+	* Add rust-toolchain
 	* Remove shell scripts in .tool directory
 
 Sun 17 Feb 2019 Yasuhiro Яша Asaka <yasuhiro.asaka@grauwoelfchen.net>
